@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poster Generator Pro</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #eef2f3;
+  text-align: center;
+}
+
+.box {
+  background: white;
+  padding: 15px;
+  margin: 15px;
+  border-radius: 12px;
+}
+
+input, select, button {
+  padding: 10px;
+  margin: 8px;
+  width: 90%;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+canvas {
+  margin-top: 15px;
+  border-radius: 10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+<h2>🔥 Poster Generator Pro</h2>
+
+<input id="title" placeholder="Enter Topic (e.g SSC GD Admit Card 2026 Out)">
+
+<select id="theme">
+<option value="#d32f2f">Red Theme</option>
+<option value="#1976d2">Blue Theme</option>
+<option value="#388e3c">Green Theme</option>
+</select>
+
+<select id="layout">
+<option value="poster">Poster</option>
+<option value="square">Square</option>
+<option value="banner">Banner</option>
+</select>
+
+<input type="file" id="logo">
+
+<button onclick="generate()">Generate Poster</button>
+
+<canvas id="canvas"></canvas>
+
+<br>
+<button onclick="download()">Download</button>
+<button onclick="share()">Share WhatsApp</button>
+
+</div>
+
+<script>
+
+function generate(){
+let title = document.getElementById("title").value;
+let theme = document.getElementById("theme").value;
+let layout = document.getElementById("layout").value;
+
+let canvas = document.getElementById("canvas");
+let ctx = canvas.getContext("2d");
+
+// Layout sizes
+if(layout=="poster"){ canvas.width=400; canvas.height=600; }
+if(layout=="square"){ canvas.width=400; canvas.height=400; }
+if(layout=="banner"){ canvas.width=600; canvas.height=300; }
+
+// Background
+ctx.fillStyle = theme;
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+// Title
+ctx.fillStyle="white";
+ctx.font="bold 24px Arial";
+wrapText(ctx, title, 20, 60, canvas.width-40, 28);
+
+// Section - Important
+ctx.font="16px Arial";
+ctx.fillText("Important Updates:",20,140);
+ctx.fillText("✔ Admit Card Released",20,170);
+ctx.fillText("✔ Check Official Website",20,200);
+
+// Section - Steps
+ctx.fillText("Steps:",20,250);
+ctx.fillText("1. Visit Website",20,280);
+ctx.fillText("2. Enter Details",20,310);
+ctx.fillText("3. Download Admit Card",20,340);
+
+// Logo upload
+let file = document.getElementById("logo").files[0];
+if(file){
+  let img = new Image();
+  img.onload = function(){
+    ctx.drawImage(img, canvas.width-90, 10, 80, 80);
+  }
+  img.src = URL.createObjectURL(file);
+}
+}
+
+// Text wrap function
+function wrapText(ctx, text, x, y, maxWidth, lineHeight){
+let words = text.split(' ');
+let line = '';
+
+for(let n=0; n<words.length; n++){
+  let testLine = line + words[n] + ' ';
+  let metrics = ctx.measureText(testLine);
+  let testWidth = metrics.width;
+
+  if(testWidth > maxWidth && n > 0){
+    ctx.fillText(line, x, y);
+    line = words[n] + ' ';
+    y += lineHeight;
+  } else {
+    line = testLine;
+  }
+}
+ctx.fillText(line, x, y);
+}
+
+// Download
+function download(){
+let canvas = document.getElementById("canvas");
+let link = document.createElement('a');
+link.download = "poster.png";
+link.href = canvas.toDataURL();
+link.click();
+}
+
+// WhatsApp Share
+function share(){
+let msg = "Check this poster I created!";
+window.open("https://wa.me/?text=" + encodeURIComponent(msg));
+}
+
+</script>
+
+</body>
+</html>
