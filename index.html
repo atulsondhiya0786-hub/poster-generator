@@ -1,34 +1,33 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Poster Generator Pro</title>
+<title>SSC Poster Generator</title>
 
 <style>
 body {
   font-family: Arial;
-  background: #eef2f3;
+  background: #ddd;
   text-align: center;
 }
 
-.box {
+.container {
+  max-width: 420px;
+  margin: auto;
   background: white;
-  padding: 15px;
-  margin: 15px;
+  padding: 10px;
   border-radius: 12px;
 }
 
-input, select, button {
+input, button {
+  width: 95%;
   padding: 10px;
-  margin: 8px;
-  width: 90%;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  margin: 5px;
 }
 
 canvas {
-  margin-top: 15px;
+  margin-top: 10px;
   border-radius: 10px;
 }
 </style>
@@ -37,32 +36,18 @@ canvas {
 
 <body>
 
-<div class="box">
-<h2>🔥 Poster Generator Pro</h2>
+<div class="container">
+<h3>🔥 SSC Poster Generator</h3>
 
-<input id="title" placeholder="Enter Topic (e.g SSC GD Admit Card 2026 Out)">
-
-<select id="theme">
-<option value="#d32f2f">Red Theme</option>
-<option value="#1976d2">Blue Theme</option>
-<option value="#388e3c">Green Theme</option>
-</select>
-
-<select id="layout">
-<option value="poster">Poster</option>
-<option value="square">Square</option>
-<option value="banner">Banner</option>
-</select>
+<input id="title" placeholder="Enter Title (SSC GD Admit Card 2026 Out)">
 
 <input type="file" id="logo">
 
 <button onclick="generate()">Generate Poster</button>
 
-<canvas id="canvas"></canvas>
+<canvas id="canvas" width="400" height="650"></canvas>
 
-<br>
 <button onclick="download()">Download</button>
-<button onclick="share()">Share WhatsApp</button>
 
 </div>
 
@@ -70,60 +55,87 @@ canvas {
 
 function generate(){
 let title = document.getElementById("title").value;
-let theme = document.getElementById("theme").value;
-let layout = document.getElementById("layout").value;
-
 let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
 
-// Layout sizes
-if(layout=="poster"){ canvas.width=400; canvas.height=600; }
-if(layout=="square"){ canvas.width=400; canvas.height=400; }
-if(layout=="banner"){ canvas.width=600; canvas.height=300; }
+// background
+ctx.fillStyle = "#1976d2";
+ctx.fillRect(0,0,400,650);
 
-// Background
-ctx.fillStyle = theme;
-ctx.fillRect(0,0,canvas.width,canvas.height);
+// header
+ctx.fillStyle = "#0d47a1";
+ctx.fillRect(0,0,400,70);
 
-// Title
-ctx.fillStyle="white";
-ctx.font="bold 24px Arial";
-wrapText(ctx, title, 20, 60, canvas.width-40, 28);
+// title
+ctx.fillStyle = "white";
+ctx.font = "bold 20px Arial";
+wrapText(ctx, title, 20, 40, 360, 22);
 
-// Section - Important
-ctx.font="16px Arial";
-ctx.fillText("Important Updates:",20,140);
-ctx.fillText("✔ Admit Card Released",20,170);
-ctx.fillText("✔ Check Official Website",20,200);
+// highlight strip
+ctx.fillStyle = "yellow";
+ctx.fillRect(0,70,400,40);
 
-// Section - Steps
-ctx.fillText("Steps:",20,250);
-ctx.fillText("1. Visit Website",20,280);
-ctx.fillText("2. Enter Details",20,310);
-ctx.fillText("3. Download Admit Card",20,340);
+ctx.fillStyle = "black";
+ctx.font = "bold 16px Arial";
+ctx.fillText("SSC GD Admit Card 2026 OUT NOW", 20, 95);
 
-// Logo upload
+// IMPORTANT BOX
+ctx.fillStyle = "white";
+ctx.fillRect(10,130,380,140);
+
+ctx.fillStyle = "red";
+ctx.font = "bold 16px Arial";
+ctx.fillText("IMPORTANT UPDATES", 20, 155);
+
+ctx.fillStyle = "black";
+ctx.font = "14px Arial";
+ctx.fillText("✔ Admit Card Released", 20, 185);
+ctx.fillText("✔ Check Official Website", 20, 210);
+
+// STEPS BOX
+ctx.fillStyle = "white";
+ctx.fillRect(10,290,380,170);
+
+ctx.fillStyle = "#0d47a1";
+ctx.font = "bold 16px Arial";
+ctx.fillText("HOW TO DOWNLOAD?", 20, 315);
+
+ctx.fillStyle = "black";
+ctx.font = "14px Arial";
+ctx.fillText("1. Visit Official Website", 20, 345);
+ctx.fillText("2. Click Admit Card", 20, 370);
+ctx.fillText("3. Enter Details", 20, 395);
+ctx.fillText("4. Download & Print", 20, 420);
+
+// WARNING BOX
+ctx.fillStyle = "#ffcc00";
+ctx.fillRect(10,480,380,100);
+
+ctx.fillStyle = "black";
+ctx.font = "bold 14px Arial";
+ctx.fillText("⚠ Without Admit Card Entry Not Allowed", 20, 530);
+
+// LOGO
 let file = document.getElementById("logo").files[0];
 if(file){
   let img = new Image();
-  img.onload = function(){
-    ctx.drawImage(img, canvas.width-90, 10, 80, 80);
+  img.onload = ()=>{
+    ctx.drawImage(img, 300, 5, 80, 60);
   }
   img.src = URL.createObjectURL(file);
 }
 }
 
-// Text wrap function
+// wrap text
 function wrapText(ctx, text, x, y, maxWidth, lineHeight){
 let words = text.split(' ');
 let line = '';
 
 for(let n=0; n<words.length; n++){
   let testLine = line + words[n] + ' ';
-  let metrics = ctx.measureText(testLine);
-  let testWidth = metrics.width;
+  let width = ctx.measureText(testLine).width;
 
-  if(testWidth > maxWidth && n > 0){
+  if(width > maxWidth && n > 0){
     ctx.fillText(line, x, y);
     line = words[n] + ' ';
     y += lineHeight;
@@ -134,19 +146,12 @@ for(let n=0; n<words.length; n++){
 ctx.fillText(line, x, y);
 }
 
-// Download
+// download
 function download(){
-let canvas = document.getElementById("canvas");
 let link = document.createElement('a');
-link.download = "poster.png";
-link.href = canvas.toDataURL();
+link.download = "ssc-poster.png";
+link.href = document.getElementById("canvas").toDataURL();
 link.click();
-}
-
-// WhatsApp Share
-function share(){
-let msg = "Check this poster I created!";
-window.open("https://wa.me/?text=" + encodeURIComponent(msg));
 }
 
 </script>
